@@ -1,0 +1,57 @@
+###############################################################################
+#
+# Regular dodecahedron.
+#
+# phi    - the golden ratio
+# invPhi - the inverse of the golden ratio
+# ESVD   - equivalent spherical volume diameter
+# esize  - element size
+#
+# S      - scale factor
+# V      - standard dodecahedron volume
+#
+# {phi=(1 + sqrt(5))/2}
+# {invPhi=2/(1 + sqrt(5))}
+# {ESVD=0.100}
+# {esize=0.009}
+#
+###############################################################################
+
+reset
+
+create vertex x  1 y  0 z  0
+create vertex x -1 y  0 z  0
+create vertex x  0 y  1 z  0
+create vertex x  0 y -1 z  0
+create vertex x  0 y  0 z  1
+create vertex x  0 y  0 z -1
+
+
+create surface vertex 1 3 5
+create surface vertex 2 5 3
+create surface vertex 6 2 8
+create surface vertex 8 1 6
+create surface vertex 4 6 1
+create surface vertex 4 1 7
+create surface vertex 4 7 9
+create surface vertex 4 9 6
+
+
+create volume surface all heal
+compress
+
+###############################################################################
+# Scale geometry so that it has volume equivalent to a sphere of diameter ESVD
+###############################################################################
+
+# {V=Volume(1)}
+# {DUMP()}
+# {S=((pi/(6*V))^(1/3))*ESVD}
+volume 1 scale {S}
+
+###############################################################################
+# Mesh the volume
+###############################################################################
+volume all scheme tetmesh
+volume all size {esize}
+mesh volume all
