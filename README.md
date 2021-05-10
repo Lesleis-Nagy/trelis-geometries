@@ -1,2 +1,2 @@
-# trelis_geometries
-A selection of trelis geometries.
+# Trelis geometries
+A selection of geometries for [Trelis](https://coreform.com/products/trelisnew/).
