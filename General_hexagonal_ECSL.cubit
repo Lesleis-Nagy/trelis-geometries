@@ -1,0 +1,45 @@
+###############################################################################
+#
+# dh       - hexagonal prism diameter/height ratio 
+# ECSL     - equivalent cubic side length (in microns).
+# S        - ECSLD scaling factor (assigned below).
+# pi       - the numeric value of the mathematical constant pi - not used here
+# esize    - the element size (in microns)
+#
+# {dh=5.5}
+# {ECSL=.50}
+# {S=0.0}
+# {pi=atan2(0,-1)}
+# {esize=0.050}
+#
+###############################################################################
+
+reset
+{rsize=.5}
+{hsize=1/dh}
+
+create Prism height {hsize} sides 6 radius {rsize} 
+
+###############################################################################
+# Scale geometry so that it has volume equivalent to a cube of side length ECSL
+###############################################################################
+
+# {V=Volume(1)}
+# {DUMP()}
+# {S=((1/V)^(1/3))*ECSL}
+volume 1 scale {S}
+
+# {VTOT=Volume(1)}
+# {DUMP()}
+
+###############################################################################
+# Meshing                                                                     
+###############################################################################
+volume 1 scheme tetmesh
+volume 1 size {esize}
+mesh volume 1
+block 101 add volume all
+block 101 element type tetra4
+
+export patran "/Users/williams/Desktop/test.pat" overwrite
+
