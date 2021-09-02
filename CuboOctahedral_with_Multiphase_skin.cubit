@@ -5,6 +5,10 @@ set warning=off
 # Ipercent 		- is the elongation percentage.
 # ESVD     		- equivalent spherical volume diameter.
 # skin     		- skin thickness of outer layer in microns
+# oldskin		- set to negative is not to be used.
+#                 skin thickness of previous model - used in merrill to help remeshing
+#                 so that magnetizations beyond oldmesh are set to random and not just
+#                 extrapolate which often fails and returns nan's.
 # gap      		- gap between core and outer layer 
 # S        		- ESVD scaling factor (assigned below).
 # pi       		- the numeric value of the mathematical constant pi
@@ -15,7 +19,8 @@ set warning=off
 # {FT=0.7}
 # {Ipercent=0.0}
 # {ESVD=0.060}
-# {skin = .015}
+# {oldskin = -1}
+# {skin = .001}
 # {gap = .0005}
 # {S=0.0}
 # {pi=atan2(0,-1)}
@@ -97,7 +102,8 @@ unite body all
 compress
 
 ###############################################################################
-# Scale geometry so that it has volume equivalent to a sphere of diameter ESVD
+# Scale geometry so that it has volume equivalent to a sphere of diameter ESVD#
+# and add appropriate block numbers                                           #
 ###############################################################################
 
 # {V=Volume(1)}
@@ -113,6 +119,38 @@ Volume 1  copy scale {geomscale_with_Skin_and_Gap} nomesh
 # {rmax_with_skin_and_gap=BBox_XMax("volume", 3)}
 subtract body 2 from body 3
 compress
+set duplicate block elements off
+block 101 add volume 1
+block 101 name "core"
+
+block 202 add volume 2
+block 202 name "OuterShell"
+merge volume 2 with volume 3 
+
+#{ifdef(oldskin>0)}
+delete block 202
+# {geomscale_with_oldskin_and_Gap=((rmax+oldskin+gap)/rmax)}
+# {geomscale_with_Gap=((rmax+gap)/rmax)}
+Volume 1  copy scale {geomscale_with_Gap} nomesh
+# {rmax_with_gap=BBox_XMax("volume", 3)}
+Volume 1  copy scale {geomscale_with_oldskin_and_Gap} nomesh
+# {rmax_with_skin_and_gap=BBox_XMax("volume", 4)}
+
+subtract body 3 from body 4
+compress
+subtract body 3 from body 2 imprint keep_tool 
+compress
+block 202 add volume 2
+block 202 name "Inner-OldShell"
+block 303 add volume 3
+block 303 name "OuterShell"
+merge volume 2 with volume 3
+compress
+#{Endif}
+
+
+
+
 
 ###############################################################################
 # Meshing                                                                     #
@@ -120,11 +158,6 @@ compress
 volume 1 scheme tetmesh
 volume 1 size {esize}
 mesh volume 1
-
-set duplicate block elements off
-block 101 add volume 1
-block 101 name "core"
-
 
 volume 2 scheme tetmesh
 
@@ -134,15 +167,23 @@ volume 2 scheme tetmesh
 #{esize_skin = esize}
 #{Endif}
 
-#{esize_skin = .004}
+#{xxxxxxesize_skin = .006}
 volume 2 size {esize_skin}
 mesh volume 2
 
-set duplicate block elements off
-block 202 add volume 2
-block 202 name "OuterShell"
+volume 3 scheme tetmesh
+
+#{Ifdef(skin<1.5*esize)}
+#{esize_skin = emin}
+#{else}
+#{esize_skin = esize}
+#{Endif}
+
+#{xxxxxxesize_skin = .006}
+volume 3 size {esize_skin}
+mesh volume 3
 
 
 block all element type tetra4
 
-export patran "/Users/williams/Research/Brendan_R/Grow/60_15.pat" overwrite
+export patran "/Users/williams/Research/Brendan_R/Grow/60_01_root.pat" overwrite
