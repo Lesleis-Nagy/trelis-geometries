@@ -12,7 +12,8 @@
 #
 # {phi=(1 + sqrt(5))/2}
 # {invPhi=2/(1 + sqrt(5))}
-# {ESVD=0.100}
+# {pi=3.141592654}
+# {ESVD=0.050}
 # {esize=0.009}
 #
 ###############################################################################
@@ -55,3 +56,4 @@ volume 1 scale {S}
 volume all scheme tetmesh
 volume all size {esize}
 mesh volume all
+export patran "/Users/williams/Research/Adam/octahedron/50.pat"  overwrite  everything 

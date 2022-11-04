@@ -5,7 +5,7 @@ set warning=off
 # Ipercent 		- is the elongation percentage.
 # ESVD     		- equivalent spherical volume diameter.
 # skin     		- skin thickness of outer layer in microns
-# oldskin		- set to negative is not to be used.
+# oldskin		- set to negative if not to be used.
 #                 skin thickness of previous model - used in merrill to help remeshing
 #                 so that magnetizations beyond oldmesh are set to random and not just
 #                 extrapolate which often fails and returns nan's.
@@ -19,8 +19,8 @@ set warning=off
 # {FT=0.7}
 # {Ipercent=0.0}
 # {ESVD=0.060}
-# {oldskin = -1}
-# {skin = .001}
+# {oldskin = .050}
+# {skin = .060}
 # {gap = .0005}
 # {S=0.0}
 # {pi=atan2(0,-1)}
@@ -125,7 +125,6 @@ block 101 name "core"
 
 block 202 add volume 2
 block 202 name "OuterShell"
-merge volume 2 with volume 3 
 
 #{ifdef(oldskin>0)}
 delete block 202
@@ -167,10 +166,12 @@ volume 2 scheme tetmesh
 #{esize_skin = esize}
 #{Endif}
 
-#{xxxxxxesize_skin = .006}
+# Use overide below if needed 
+#{esize_skin = .008}
 volume 2 size {esize_skin}
 mesh volume 2
 
+#{ifdef(oldskin>0)}
 volume 3 scheme tetmesh
 
 #{Ifdef(skin<1.5*esize)}
@@ -179,11 +180,12 @@ volume 3 scheme tetmesh
 #{esize_skin = esize}
 #{Endif}
 
-#{xxxxxxesize_skin = .006}
+# Use overide below if needed 
+#{esize_skin = .008}
 volume 3 size {esize_skin}
 mesh volume 3
-
+#{Endif}
 
 block all element type tetra4
 
-export patran "/Users/williams/Research/Brendan_R/Grow/60_01_root.pat" overwrite
+export patran "/Users/williams/Research/Brendan_R/Grow/60_60_50.pat" overwrite

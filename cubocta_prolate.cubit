@@ -1,31 +1,23 @@
-set warning=off
 ###############################################################################
+################################################################################
 #
-# FT       		- face truncation factor (0.7 is what I've been using).
-# Ipercent 		- is the elongation percentage.
-# ESVD     		- equivalent spherical volume diameter.
-# skin     		- skin thickness of outer layer in microns
-# gap      		- gap between core and outer layer 
-# S        		- ESVD scaling factor (assigned below).
-# pi       		- the numeric value of the mathematical constant pi
-# esize    		- the element size for core
-# emin			- the minimum element size allowed
-# esize_skin 	- the element size of skin. - esize if (skin > esize), else= skin
+# FT       - face truncation factor (0.7 is what I've been using).
+# Ipercent - is the elongation percentage.
+# ESVD     - equivalent spherical volume diameter.
+# S        - ESVD scaling factor (assigned below).
+# pi       - the numeric value of the mathematical constant pi
+# esize    - the element size
 #
 # {FT=0.7}
-# {Ipercent=0.0}
-# {ESVD=0.060}
-# {skin = .030}
-# {gap = .0005}
+# {Ipercent=500.0}
+# {ESVD=0.110}
 # {S=0.0}
 # {pi=atan2(0,-1)}
-# {esize=0.008}
-# {emin=0.004}
-# 
+# {esize=0.009}
+#
 ###############################################################################
 
-Reset
-warning=off
+reset
 
 create vertex x  1 y  0 z  0   # 1
 create vertex x -1 y  0 z  0   # 2
@@ -44,7 +36,7 @@ create surface vertex 2 3 6
 create surface vertex 2 4 5
 create surface vertex 2 4 6
 
-Create volume surface all heal
+stitch body all
 
 compress
 
@@ -54,7 +46,6 @@ move surface  9 location  {FT}  0.0  0.0
 create surface rectangle width 3 xplane
 move surface 10 location {-FT}  0.0  0.0
 reverse surface 10
-
 create surface rectangle width 3 yplane
 move surface 11 location  0.0  {FT}  0.0
 
@@ -104,15 +95,6 @@ compress
 # {DUMP()}
 # {S=((pi/(6*V))^(1/3))*ESVD}
 volume 1 scale {S}
-# {rmax=BBox_XMax("volume", 1)}
-# {geomscale_with_Skin_and_Gap=((rmax+skin+gap)/rmax)}
-# {geomscale_with_Gap=((rmax+gap)/rmax)}
-Volume 1  copy scale {geomscale_with_Gap} nomesh
-# {rmax_with_gap=BBox_XMax("volume", 2)}
-Volume 1  copy scale {geomscale_with_Skin_and_Gap} nomesh
-# {rmax_with_skin_and_gap=BBox_XMax("volume", 3)}
-subtract body 2 from body 3
-compress
 
 ###############################################################################
 # Meshing                                                                     #
@@ -121,28 +103,7 @@ volume 1 scheme tetmesh
 volume 1 size {esize}
 mesh volume 1
 
-set duplicate block elements off
-block 101 add volume 1
-block 101 name "core"
+export patran "/Volumes/MMDataBase/legacy/magnetite/cubo500/meshes/110.pat" overwrite everything
 
 
-volume 2 scheme tetmesh
-
-#{Ifdef(skin<1.5*esize)}
-#{esize_skin = emin}
-#{else}
-#{esize_skin = esize}
-#{Endif}
-
-#{esize_skin = .007}
-volume 2 size {esize_skin}
-mesh volume 2
-
-set duplicate block elements off
-block 202 add volume 2
-block 202 name "OuterShell"
-
-
-block all element type tetra4
-
-export patran "/Users/williams/Research/Brendan_R/Grow/TEST.pat" overwrite
+export mesh "/Volumes/MMDataBase/legacy/magnetite/cubo500/meshes/110.e" overwrite everything
