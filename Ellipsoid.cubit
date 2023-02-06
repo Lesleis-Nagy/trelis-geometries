@@ -14,9 +14,9 @@
 # {phi=(1 + sqrt(5))/2}
 # {invPhi=2/(1 + sqrt(5))}
 # {pi=3.141592654}
-# {ESVD=0.050}
-# {AR=0.54}
-# {esize=0.009}
+# {ESVD=0.020}
+# {AR=1.}
+# {esize=0.003}
 #
 ###############################################################################
 
@@ -28,7 +28,7 @@ create sphere radius 0.1
 # Scale geometry to the desired aspect ratio along the x-axis direction
 ###############################################################################
 
-volume 1 scale X {AR} Y 1.0 Z 1.0
+volume 1 scale X 1 Y 1.0 Z {AR}
 
 ###############################################################################
 # Scale geometry so that it has volume equivalent to a sphere of diameter ESVD
@@ -45,4 +45,6 @@ volume 1 scale {S}
 volume all scheme tetmesh
 volume all size {esize}
 mesh volume all
-# export patran "./Test_Space/Ellipse_Tests.pat"  overwrite  everything 
+block 101 add volume all
+block all element type tetra4
+export patran "/Users/williams/Research/iron_geoms/sp020.pat"  overwrite  everything 
