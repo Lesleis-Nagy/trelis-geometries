@@ -1,0 +1,50 @@
+###############################################################################
+#
+# Regular dodecahedron.
+#
+# phi    - the golden ratio
+# invPhi - the inverse of the golden ratio
+# ESVD   - equivalent spherical volume diameter
+# AR     - is the aspect ratio
+# esize  - element size
+#
+# S      - scale factor
+# V      - standard dodecahedron volume
+#
+# {phi=(1 + sqrt(5))/2}
+# {invPhi=2/(1 + sqrt(5))}
+# {pi=3.141592654}
+# {ESVD=0.020}
+# {AR=1.}
+# {esize=0.003}
+#
+###############################################################################
+
+reset
+
+create sphere radius 0.1
+
+###############################################################################
+# Scale geometry to the desired aspect ratio along the x-axis direction
+###############################################################################
+
+volume 1 scale X 1 Y 1.0 Z {AR}
+
+###############################################################################
+# Scale geometry so that it has volume equivalent to a sphere of diameter ESVD
+###############################################################################
+
+# {V=Volume(1)}
+# {DUMP()}
+# {S=((pi/(6*V))^(1/3))*ESVD}
+volume 1 scale {S}
+
+###############################################################################
+# Mesh the volume
+###############################################################################
+volume all scheme tetmesh
+volume all size {esize}
+mesh volume all
+block 101 add volume all
+block all element type tetra4
+export patran "/Users/williams/Research/iron_geoms/sp020.pat"  overwrite  everything 

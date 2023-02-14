@@ -1,11 +1,13 @@
 ###############################################################################
 #
-# Regular dodecahedron.
+# Ellipsoid. Major axis is always along x. Intermediate axis is always along y.
+# Minor axis is always along z.
 #
 # phi    - the golden ratio
 # invPhi - the inverse of the golden ratio
 # ESVD   - equivalent spherical volume diameter
-# AR - is the aspect ratio
+# PRO    - prolateness (major/intermediate axis)
+# OBL    - oblateness (minor/intermediate axis)
 # esize  - element size
 #
 # S      - scale factor
@@ -13,10 +15,11 @@
 #
 # {phi=(1 + sqrt(5))/2}
 # {invPhi=2/(1 + sqrt(5))}
-# {pi=3.141592654}
-# {ESVD=0.020}
-# {AR=1.}
-# {esize=0.003}
+# {pi=atan2(0,-1)}
+# {ESVD={{ esvd_size }}}
+# {PRO={{ prolateness }}}
+# {OBL={{ oblateness }}}
+# {esize={{ element_size }}}
 #
 ###############################################################################
 
@@ -28,7 +31,7 @@ create sphere radius 0.1
 # Scale geometry to the desired aspect ratio along the x-axis direction
 ###############################################################################
 
-volume 1 scale X 1 Y 1.0 Z {AR}
+volume 1 scale X {PRO} Y 1.0 Z {1/OBL}
 
 ###############################################################################
 # Scale geometry so that it has volume equivalent to a sphere of diameter ESVD
@@ -45,6 +48,12 @@ volume 1 scale {S}
 volume all scheme tetmesh
 volume all size {esize}
 mesh volume all
+
 block 101 add volume all
-block all element type tetra4
-export patran "/Users/williams/Research/iron_geoms/sp020.pat"  overwrite  everything 
+block 101 element type tetra4
+
+export patran "{{ abs_mesh_file }}"  overwrite  everything
+
+{% if abs_exodus_mesh_file is not none %}
+export mesh "{{ abs_exodus_mesh_file }}" overwrite
+{% endif %}

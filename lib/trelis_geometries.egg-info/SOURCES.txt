@@ -1,0 +1,16 @@
+LICENSE
+README.md
+setup.py
+lib/trelis_geometries/__init__.py
+lib/trelis_geometries/configuration.py
+lib/trelis_geometries/decorator.py
+lib/trelis_geometries/entry_point.py
+lib/trelis_geometries/generation.py
+lib/trelis_geometries/logger.py
+lib/trelis_geometries.egg-info/PKG-INFO
+lib/trelis_geometries.egg-info/SOURCES.txt
+lib/trelis_geometries.egg-info/dependency_links.txt
+lib/trelis_geometries.egg-info/entry_points.txt
+lib/trelis_geometries.egg-info/requires.txt
+lib/trelis_geometries.egg-info/top_level.txt
+lib/trelis_geometries/templates/__init__.py
