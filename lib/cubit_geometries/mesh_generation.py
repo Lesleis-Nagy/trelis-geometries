@@ -106,7 +106,12 @@ class CubitMeshGenerator:
                     fout.write(f"{result.stderr}\n")
 
             if result.success:
-                print("Run was successful")
+                # Check that the file exists.
+                if not os.path.isfile(self.script_generator.abs_mesh_file):
+                    print("Run was successful but the mesh could *NOT* be generated (see the standard output using "
+                          "the --cubit-stdout option for more details).")
+                else:
+                    print("Run was successful")
             else:
                 print("Run failed for some reason (use --cubit-stdout, --cubit-stderr and --log flags for diagnostics.")
 
