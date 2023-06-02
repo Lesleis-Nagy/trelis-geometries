@@ -10,17 +10,40 @@
 #
 # S      - scale factor
 # V      - standard dodecahedron volume
-#
+# name 	- name of the outputfile 
+# {name1="ellipsoid_"}
+# {name2=".pat"}
+# {name3="nm_"} 
+# {name4="esvd_"} 
 # {phi=(1 + sqrt(5))/2}
 # {invPhi=2/(1 + sqrt(5))}
 # {pi=3.141592654}
-# {ESVD=0.020}
+# {ESVD=0.04}
 # {AR=1.}
-# {esize=0.003}
-#
+# {ARXY=1.}
+# {ARYZ=1.}
+# {esize=0.09}
+# {baseidr = "/Users/williams/Research/magnetitegeoms/"}
+# {writefile = "vvvv"}
 ###############################################################################
 
+#{loop(2)}
 reset
+#{if(ESVD>=0.04 && ESVD<0.08)} 
+#{ESVD= ESVD +.02}
+#{endif}
+
+#{if(ESVD>=0.08 && ESVD<0.120)} 
+#{ESVD= ESVD +.01}
+#{endif}
+
+#{if(ESVD>=0.120 && ESVD<0.30)} 
+#{ESVD= ESVD +.02}
+#{endif}
+
+#{if(ESVD>=0.3 && ESVD<0.50)} 
+#{ESVD= ESVD +.04}
+#{endif}
 
 create sphere radius 0.1
 
@@ -47,4 +70,17 @@ volume all size {esize}
 mesh volume all
 block 101 add volume all
 block all element type tetra4
-export patran "/Users/williams/Research/iron_geoms/sp020.pat"  overwrite  everything 
+
+#{name_size=tostring([ESVD*1000])}
+#{mesh_size=tolower([esize])}
+#{pro_prefix=tolower([ARXY])}
+#{pro_suffix=tolower([(ARXY-[ARXY])*10])}
+#{name={basedir}//{name1}//{name_size}//"nm_esvd_"//{mesh_size}//"nm_pro"//{pro_prefix}//"p"//{pro_suffix}}
+#{writefile  = "export patran"//basedir//name_size/".pat"}
+#{writefile="export patran /Users/williams/Research/magnetitegeoms/"//{name_size}//".pat"}
+#{execute(writefile)} 
+# {DUMP()}
+#{EndLooP}
+
+
+export patran {name} overwrite  everything 
