@@ -13,8 +13,8 @@
 # {phi=(1 + sqrt(5))/2}
 # {invPhi=2/(1 + sqrt(5))}
 # {pi=3.141592654}
-# {ESVD=0.050}
-# {esize=0.009}
+# {ESVD=0.200}
+# {esize=0.008}
 #
 ###############################################################################
 
@@ -41,4 +41,6 @@ volume 1 scale {S}
 volume all scheme tetmesh
 volume all size {esize}
 mesh volume all
+block 101 add volume 1 
+block all element type tetra4
 export patran "PATHNAME"  overwrite  everything 
